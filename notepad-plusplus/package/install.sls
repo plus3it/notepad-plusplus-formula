@@ -10,6 +10,11 @@
   {%- set temp_exe = 'C:/Windows/Temp/npp.Installer.exe' %}
 {%- endif %}
 
+Delete EXE-installer:
+  file.absent:
+    - name: '{{ temp_exe }}'
+    - require:
+      - cmd: 'Install NotePad++'
 
 Download NotePad++:
   file.managed:
@@ -18,6 +23,16 @@ Download NotePad++:
     - skip_verify: True
     - makedirs: True
 
-## notepad-plusplus-package-install-pkg-installed:
-##   pkg.installed:
-##     - name: {{ notepad__plusplus.pkg.name }}
+Install NotePad++:
+  cmd.run:
+    - name: |
+        Start-Process "{{ temp_exe }}" -ArgumentList '/S' -Wait
+        Start-Sleep -Seconds 5
+    - require:
+      - file: 'Download NotePad++'
+    - shell: powershell
+    - success_retcodes: [
+        0,
+        3010
+      ]
+    - unless: 'if ( Test-Path "${env:ProgramFiles}\Notepad++\notepad++.exe" ) { exit 0 } else { exit 1 }'
