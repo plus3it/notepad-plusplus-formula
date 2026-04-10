@@ -35,4 +35,13 @@ Install NotePad++:
         0,
         3010
       ]
-    - unless: 'if ( Test-Path "${env:ProgramFiles}\Notepad++\notepad++.exe" ) { exit 0 } else { exit 1 }'
+    - unless: |-
+        $nppPath = "C:\Program Files\Notepad++\notepad++.exe"
+
+        if ((Test-Path $nppPath) -and ((Get-Item $nppPath).VersionInfo.FileVersion -eq "{{ notepad_plusplus.pkg.version }}")) {
+          Write-Host 'Already at desired version' -ForegroundColor Green
+          exit 0
+        } else {
+          Write-Host 'Not at desired version (or not installed)' -ForegroundColor Yellow
+          exit 1
+        }
