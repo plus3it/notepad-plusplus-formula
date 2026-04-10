@@ -3,9 +3,9 @@
 
 {#- Get the `tplroot` from `tpldir` #}
 {%- set tplroot = tpldir.split('/')[0] %}
-{%- from tplroot ~ "/map.jinja" import mapdata as notepad__plusplus with context %}
+{%- from tplroot ~ "/map.jinja" import mapdata as notepad_plusplus with context %}
 
 notepad-plusplus-service-clean-service-dead:
   service.dead:
-    - name: {{ notepad__plusplus.service.name }}
+    - name: {{ notepad_plusplus.service.name }}
     - enable: False

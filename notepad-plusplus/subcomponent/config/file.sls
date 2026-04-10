@@ -4,7 +4,7 @@
 {#- Get the `tplroot` from `tpldir` #}
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- set sls_config_file = tplroot ~ '.config.file' %}
-{%- from tplroot ~ "/map.jinja" import mapdata as notepad__plusplus with context %}
+{%- from tplroot ~ "/map.jinja" import mapdata as notepad_plusplus with context %}
 {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
 
 include:
@@ -12,7 +12,7 @@ include:
 
 notepad-plusplus-subcomponent-config-file-file-managed:
   file.managed:
-    - name: {{ notepad__plusplus.subcomponent.config }}
+    - name: {{ notepad_plusplus.subcomponent.config }}
     - source: {{ files_switch(['subcomponent-example.tmpl'],
                               lookup='notepad-plusplus-subcomponent-config-file-file-managed',
                               use_subpath=True
@@ -20,7 +20,7 @@ notepad-plusplus-subcomponent-config-file-file-managed:
               }}
     - mode: 644
     - user: root
-    - group: {{ notepad__plusplus.rootgroup }}
+    - group: {{ notepad_plusplus.rootgroup }}
     - makedirs: True
     - template: jinja
     - require_in:
