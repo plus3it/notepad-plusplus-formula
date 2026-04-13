@@ -19,6 +19,8 @@ NPP User Template (No nagging for updates):
         <NotepadPlus>
             <GUIConfig name="noUpdate" yesNo="yes" />
         </NotepadPlus>
+    - require:
+      - cmd: 'Install NotePad++'
 
 {% for admin in npp_admins %}
 {% set admin_appdata = 'C:\\Users\\' ~ admin ~ '\\AppData\\Roaming\\Notepad++' %}
