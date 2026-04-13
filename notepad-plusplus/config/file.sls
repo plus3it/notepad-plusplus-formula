@@ -28,8 +28,14 @@ Ensure NPP Admin Config Dir for {{ admin }} exists:
   file.directory:
     - name: '{{ admin_appdata }}'
     - makedirs: True
-    # Gracefully skip if the account was renamed or doesn't exist
-    - onlyif: 'if ( Test-Path "C:\Users\{{ admin }}" ) { exit 0 } else { exit 1 }'
+    - onlyif:
+      - shell: powershell
+      - cmd: |
+          if (Get-LocalUser -Name "{{ admin }}" -ErrorAction SilentlyContinue) {
+            exit 0
+          } else {
+            exit 1
+          }
 
 Create NPP Admin Config File for {{ admin }}:
   file.managed:
@@ -40,6 +46,4 @@ Create NPP Admin Config File for {{ admin }}:
         </NotepadPlus>
     - require:
       - file: 'Ensure NPP Admin Config Dir for {{ admin }} exists'
-    # Double-guard to ensure we don't attempt to write to a non-existent path
-    - onlyif: 'if ( Test-Path "C:\Users\{{ admin }}" ) { exit 0 } else { exit 1 }'
 {% endfor %}
