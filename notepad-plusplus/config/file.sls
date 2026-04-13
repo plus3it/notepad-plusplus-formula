@@ -54,11 +54,14 @@ Ensure NPP Admin Config Dir for {{ admin }} exists:
 
 Manage Notepad++ Updater Config:
   file.managed:
-    - name: 'C:\Program Files\Notepad++\updater\gup.xml'
-    - source: salt://{{ tplroot }}/files/gup.xml
+    - context:
+        npp_version: {{ notepad_plusplus.version }}
     - makedirs: True
+    - name: 'C:\Program Files\Notepad++\updater\gup.xml'
     - require:
       - test: 'Auto-updater disablement notice'
+    - source: salt://{{ tplroot }}/files/gup.xml
+    - template: jinja
 
 NPP User Template (No nagging for updates):
   file.managed:

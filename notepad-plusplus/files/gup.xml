@@ -4,7 +4,7 @@
     <priority>low</priority>
     <package>
         <description>Notepad++</description>
-        <version>8.9.2</version>
+        <version>{{ npp_version }}</version>
     </package>
-    <infoUrl>http://127.0.0.1</infoUrl>
+    <infoUrl>http://127.0.0.1/checkUpdate.xml</infoUrl>
 </GUP>
