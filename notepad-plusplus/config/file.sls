@@ -12,18 +12,32 @@
 include:
   - {{ sls_package_install }}
 
-NPP User Template (No nagging for updates):
-  file.managed:
-    - name: {{ npp_dir }}\config.model.xml
-    - contents: |
-        <NotepadPlus>
-            <GUIConfig name="noUpdate" yesNo="yes" />
-        </NotepadPlus>
+Auto-updater disablement notice:
+  test.show_notification:
+    - text: |-
+        ---------------------------------------------
+        Auto-update disabled to prevent users from
+        being nagged to do something outside their
+        ability to effect. Administrators can still
+        login and force an update, if necessary
+        (typically, system will be re-deployed rather
+        than updated)
+        ---------------------------------------------
     - require:
       - cmd: 'Install NotePad++'
 
 {% for admin in npp_admins %}
 {% set admin_appdata = 'C:\\Users\\' ~ admin ~ '\\AppData\\Roaming\\Notepad++' %}
+Create NPP Admin Config File for {{ admin }}:
+  file.managed:
+    - name: '{{ admin_appdata }}\config.xml'
+    - contents: |
+        <NotepadPlus>
+            <GUIConfig name="noUpdate" yesNo="no" />
+        </NotepadPlus>
+    - require:
+      - file: 'Ensure NPP Admin Config Dir for {{ admin }} exists'
+
 Ensure NPP Admin Config Dir for {{ admin }} exists:
   file.directory:
     - name: '{{ admin_appdata }}'
@@ -36,14 +50,22 @@ Ensure NPP Admin Config Dir for {{ admin }} exists:
           } else {
             exit 1
           }
+{% endfor %}
 
-Create NPP Admin Config File for {{ admin }}:
+Manage Notepad++ Updater Config:
   file.managed:
-    - name: '{{ admin_appdata }}\config.xml'
+    - name: 'C:\Program Files\Notepad++\updater\gup.xml'
+    - source: salt://{{ tplroot }}/files/gup.xml
+    - makedirs: True
+    - require:
+      - test: 'Auto-updater disablement notice'
+
+NPP User Template (No nagging for updates):
+  file.managed:
+    - name: {{ npp_dir }}\config.model.xml
     - contents: |
         <NotepadPlus>
-            <GUIConfig name="noUpdate" yesNo="no" />
+            <GUIConfig name="noUpdate" yesNo="yes" />
         </NotepadPlus>
     - require:
-      - file: 'Ensure NPP Admin Config Dir for {{ admin }} exists'
-{% endfor %}
+      - cmd: 'Install NotePad++'

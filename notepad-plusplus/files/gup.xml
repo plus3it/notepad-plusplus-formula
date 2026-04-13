@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<GUP>
+    <uninstallerCmdLine>/S</uninstallerCmdLine>
+    <priority>low</priority>
+    <package>
+        <description>Notepad++</description>
+        <version>8.9.2</version>
+    </package>
+    <infoUrl>http://127.0.0.1</infoUrl>
+</GUP>
