@@ -1,0 +1,12 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+#
+# Set default values.
+---
+values:
+  pkg:
+    name: 'notepad++'
+  config:
+    npp_admins:
+      - Administrator
+...
