@@ -8,4 +8,6 @@ values:
     name: 'notepad++'
     installer_uri: ''
     version: ''
+  config:
+    npp_admins: []
 ...
