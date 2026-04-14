@@ -6,8 +6,8 @@
 {%- set sls_package_install = tplroot ~ '.package.install' %}
 {%- from tplroot ~ "/map.jinja" import mapdata as notepad_plusplus with context %}
 {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
-{%- set npp_version = notepad_plusplus.version %}
-{%- set npp_url = notepad_plusplus.download_url %}
+{%- set npp_version = notepad_plusplus.pkg.version %}
+{%- set npp_url = notepad_plusplus.pkg.installer_uri %}
 {%- set npp_admins = notepad_plusplus.config.npp_admins or ['Administrator'] %}
 {%- set npp_dir = 'C:\\Program Files\\Notepad++' %}
 

@@ -4,8 +4,8 @@
 {#- Get the `tplroot` from `tpldir` #}
 {%- set tplroot = tpldir.split('/' )[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as notepad_plusplus with context %}
-{%- set npp_version = notepad_plusplus.version %}
-{%- set npp_url = notepad_plusplus.download_url %}
+{%- set npp_version = notepad_plusplus.pkg.version %}
+{%- set npp_url = notepad_plusplus.pkg.installer_uri %}
 {%- if salt.grains.get('cpuarch' ) == "AMD64" %}
   {%- set temp_exe = 'C:/Windows/Temp/npp.Installer.x64.exe' %}
 {%- else %}

@@ -62,7 +62,7 @@
 {%- set mapdata = _formula_settings["values"] %}
 
 {# Fallback for version if not defined in defaults/pillar #}
-{%- if not mapdata.get('version') %}
+{%- if not mapdata.get('pkg', {}).get('version') %}
     {%- set github_api = "https://api.github.com/repos/notepad-plus-plus/notepad-plus-plus/releases/latest" %}
     {%- set metadata = salt['http.query'](github_api, decode=true, decode_type='json').get('dict', {}) %}
 
@@ -79,8 +79,10 @@
 
     {# Inject both into mapdata #}
     {%- do mapdata.update({
-        'version': npp_version,
-        'download_url': ns.url
+        'pkg': {
+            'version': npp_version,
+            'installer_uri': ns.url
+        }
     }) %}
 
 {%- endif %}
