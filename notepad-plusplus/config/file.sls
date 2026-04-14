@@ -27,7 +27,8 @@ Add NPP Icon to Context Menu:
 Add NPP to Context Menu:
   reg.present:
     - name: 'HKEY_CLASSES_ROOT\*\shell\Open with Notepad++\command'
-    - value: '"C:\Program Files\Notepad++\notepad++.exe" "%1"'
+    - vname: ''
+    - vdata: '"C:\Program Files\Notepad++\notepad++.exe" "%1"'
     - vtype: REG_SZ
     - require:
       - cmd: 'Install NotePad++'
@@ -105,7 +106,8 @@ Replace System Notepad with NPP:
 Set NPP App Path:
   reg.present:
     - name: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\notepad++.exe'
-    - value: 'C:\Program Files\Notepad++\notepad++.exe'
+    - vname: ''
+    - vdata: 'C:\Program Files\Notepad++\notepad++.exe'
     - vtype: REG_SZ
     - require:
       - cmd: 'Install NotePad++'
