@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 # vim: ft=yaml
 notepad-plusplus:
-  pkg:                 # Installation-package related settings
-    version: ''        # Target X.Y.Z version-number for installed Notepad++ application
-    installer_uri: ''  # URL to download from. Usually something like:
-                       # 'https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.8.8/npp.8.8.8.Installer.x64.exe'
+  pkg:                  # Installation-package related settings
+    version: ''         # Target X.Y.Z version-number for installed Notepad++ application
+    installer_uri: ''   # URL to download from. Usually something like:
+                        # 'https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.8.8/npp.8.8.8.Installer.x64.exe'
 
-  config:              # Configuration-related settings for the installed application
-    npp_admins:        # User accounts that have admin rights (list)
-      - Administrator  # Used for designating which users are allowed to be
-      - LocalAdmin     # nagged if the auto-update service is configured
+  config:               # Configuration-related settings for the installed application
+    npp_admins:         # User accounts that have admin rights (list)
+      - Administrator   # Used for designating which users are allowed to be
+      - LocalAdmin      # nagged if the auto-update service is configured
       - ...

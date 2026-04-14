@@ -20,10 +20,10 @@ $Uninstaller = Join-Path $NppPath "uninstall.exe"
 if (Test-Path $Uninstaller) {
     Write-Output "Found uninstaller at '$Uninstaller'"
     Write-Output "Executing silent uninstallation..."
-    
+
     # Start the uninstaller with the /S (Silent) flag
     $Proc = Start-Process -FilePath "$Uninstaller" -ArgumentList "/S" -Wait -PassThru
-    
+
     # Optional: Wait briefly for file system hooks to release
     Start-Sleep -Seconds 2
 
