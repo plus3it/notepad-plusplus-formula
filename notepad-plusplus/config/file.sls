@@ -6,27 +6,10 @@
 {%- set sls_package_install = tplroot ~ '.package.install' %}
 {%- from tplroot ~ "/map.jinja" import mapdata as notepad_plusplus with context %}
 {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
+{%- set npp_version = notepad_plusplus.version %}
+{%- set npp_url = notepad_plusplus.download_url %}
 {%- set npp_admins = notepad_plusplus.config.npp_admins or ['Administrator'] %}
 {%- set npp_dir = 'C:\\Program Files\\Notepad++' %}
-# Initialize a namespace to persist variables across loops
-{%- set npp = namespace(download_url='', version='') %}
-{%- if not notepad_plusplus.pkg.installer_uri %}
-    # Fallback to GitHub API
-    {%- set github_api = "https://api.github.com/repos/notepad-plus-plus/notepad-plus-plus/releases/latest" %}
-    {%- set metadata = salt['http.query'](github_api, decode=true, decode_type='json' )['dict'] %}
-
-    {%- set npp.version = metadata.get('tag_name', '0.0.0' ) | replace('v', '' ) %}
-
-    {%- for asset in metadata.get('assets', [] ) %}
-        {%- if "Installer.x64.exe" in asset.name %}
-            {%- set npp.download_url = asset.browser_download_url %}
-        {%- endif %}
-    {%- endfor %}
-{%- else %}
-    # Use provided parameters
-    {%- set npp.download_url = notepad_plusplus.pkg.installer_uri %}
-    {%- set npp.version = notepad_plusplus.pkg.version %}
-{%- endif %}
 
 
 include:
@@ -92,7 +75,7 @@ Ensure NPP Admin Config Dir for {{ admin }} exists:
 Manage Notepad++ Updater Config:
   file.managed:
     - context:
-        npp_version: {{ notepad_plusplus.version }}
+        npp_version: {{ npp_version}}
     - makedirs: True
     - name: 'C:\Program Files\Notepad++\updater\gup.xml'
     - require:

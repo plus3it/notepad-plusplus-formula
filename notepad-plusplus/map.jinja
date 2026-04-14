@@ -61,6 +61,30 @@
 {%- do salt["log.debug"]("map.jinja: save parameters in variable 'mapdata'") %}
 {%- set mapdata = _formula_settings["values"] %}
 
+{# Fallback for version if not defined in defaults/pillar #}
+{%- if not mapdata.get('version') %}
+    {%- set github_api = "https://api.github.com/repos/notepad-plus-plus/notepad-plus-plus/releases/latest" %}
+    {%- set metadata = salt['http.query'](github_api, decode=true, decode_type='json').get('dict', {}) %}
+
+    {# Extract version and clean it (v8.6.5 -> 8.6.5) #}
+    {%- set npp_version = metadata.get('tag_name', '0.0.0') | replace('v', '') %}
+
+    {# Also find the download URL while we have the metadata #}
+    {%- set ns = namespace(url='') %}
+    {%- for asset in metadata.get('assets', []) %}
+        {%- if "Installer.x64.exe" in asset.name %}
+            {%- set ns.url = asset.browser_download_url %}
+        {%- endif %}
+    {%- endfor %}
+
+    {# Inject both into mapdata #}
+    {%- do mapdata.update({
+        'version': npp_version,
+        'download_url': ns.url
+    }) %}
+
+{%- endif %}
+
 {#- Per formula post-processing of `mapdata` if it exists #}
 {%- do salt["log.debug"]("map.jinja: post-processing of 'mapdata'") %}
 {%- include tplroot ~ "/post-map.jinja" ignore missing %}
