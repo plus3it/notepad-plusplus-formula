@@ -72,7 +72,7 @@
     {# Also find the download URL while we have the metadata #}
     {%- set ns = namespace(url='') %}
     {%- for asset in metadata.get('assets', []) %}
-        {%- if "Installer.x64.exe" in asset.name %}
+        {%- if "Installer.x64.exe" in asset.name and asset.name.endswith('.exe') %}
             {%- set ns.url = asset.browser_download_url %}
         {%- endif %}
     {%- endfor %}
