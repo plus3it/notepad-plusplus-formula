@@ -9,8 +9,17 @@
 include:
   - {{ sls_config_clean }}
 
-notepad-plusplus-package-clean-pkg-removed:
-  pkg.removed:
-    - name: {{ notepad_plusplus.pkg.name }}
-    - require:
-      - sls: {{ sls_config_clean }}
+Purge Notepad++ Directory:
+  file.absent:
+    - name: 'C:\Program Files\Notepad++'
+    - onchanges:
+      - cmd: Uninstall Notepad++
+
+Uninstall Notepad++:
+  cmd.script:
+    - source: salt://{{ tplroot }}/files/npp_uninstall.ps1
+    - shell: powershell
+    - success_retcodes: [
+        0,
+        100
+      ]
