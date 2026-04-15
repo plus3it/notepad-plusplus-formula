@@ -6,8 +6,8 @@
 # Force PowerShell to stop on errors so we can catch them and report to Salt
 $ErrorActionPreference = 'Stop'
 
-$target = $args[0]
-$tempExe = $args[1]
+$target = $args[0].Trim("'")
+$tempExe = $args[1].Trim("'")
 
 # Normalize the exe-installer's path
 $tempExe = $tempExe -replace '/', '\'
