@@ -34,10 +34,13 @@ jobs:
       - name: Run PSScriptAnalyzer
         shell: pwsh
         run: |
-          # This installs the module if it's missing and runs the scan
-          Get-Module -ListAvailable PSScriptAnalyzer | Import-Module
+          # Debug: Show which files we are actually targeting
+          $files = Get-ChildItem -Path ./ -Include *.ps1 -Recurse
+          Write-Host "Found $($files.Count) PowerShell files to scan:"
+          $files.FullName
+
           $results = Invoke-ScriptAnalyzer -Path ./ -Recurse -Severity Error
           if ($results) {
               $results | Format-Table
-              exit 1 # Fails the PR check if errors are found
+              exit 1
           }
