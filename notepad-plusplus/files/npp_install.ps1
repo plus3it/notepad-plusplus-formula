@@ -30,7 +30,7 @@ foreach ($path in $paths) {
 
 # Execute the EXE-based installer
 if (-not $installed) {
-  Write-Host "Version $target not found. Attempting to install from $tempExe..."
+  Write-Output "Version $target not found. Attempting to install from $tempExe..."
   try {
     # "remote" files may get marked as blocked. Bypass that nonsense
     Unblock-File -Path $tempExe -ErrorAction SilentlyContinue
@@ -49,7 +49,7 @@ if (-not $installed) {
     foreach ($path in $paths) { if (Test-Path $path) { $verified = $true } }
 
     if ($verified) {
-        Write-Host "Installation successful (Exit Code: $exitCode)."
+        Write-Output "Installation successful (Exit Code: $exitCode)."
         exit 0
     } else {
         Write-Error "Installer finished (Exit Code: $exitCode) but registry keys not found."
@@ -60,6 +60,6 @@ if (-not $installed) {
     exit 1
   }
 } else {
-  Write-Host "Notepad++ $target already installed. Skipping."
+  Write-Output "Notepad++ $target already installed. Skipping."
   exit 0
 }
