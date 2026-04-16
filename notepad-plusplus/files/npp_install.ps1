@@ -28,11 +28,6 @@ foreach ($path in $paths) {
   }
 }
 
-# Provoke CI into reporting violations
-echo "Testing the linter"
-Write-Output $nonExistentVariableThatWillFailTheLintTest
-$AdminPassword = "Password123!"
-
 # Execute the EXE-based installer
 if (-not $installed) {
   Write-Host "Version $target not found. Attempting to install from $tempExe..."
