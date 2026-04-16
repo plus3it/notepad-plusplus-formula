@@ -35,21 +35,26 @@ jobs:
         shell: pwsh
         run: |
           $files = Get-ChildItem -Path ./ -Include *.ps1 -Recurse
-          Write-Host "Found $($files.Count) PowerShell files to scan."
+          Write-Host "--- Starting PowerShell Static Analysis ---"
 
           $anyErrors = $false
 
           foreach ($file in $files) {
-              Write-Host "Analyzing: $($file.FullName)..." -NoNewline
+              $relativePath = $file.FullName.Replace($PWD.ProviderPath, ".")
               $results = Invoke-ScriptAnalyzer -Path $file.FullName -Severity Error
 
               if ($results) {
-                  Write-Host " [FAILED]" -ForegroundColor Red
-                  $results | Format-Table
+                  Write-Host "FAIL: $relativePath" -ForegroundColor Red
+                  $results | Format-Table -AutoSize
                   $anyErrors = $true
               } else {
-                  Write-Host " [PASSED]" -ForegroundColor Green
+                  Write-Host "PASS: $relativePath" -ForegroundColor Green
               }
           }
 
-          if ($anyErrors) { exit 1 }
+          if ($anyErrors) {
+              Write-Error "Static analysis failed. Please fix the errors above."
+              exit 1
+          } else {
+              Write-Host "--- All files passed analysis! ---"
+          }
