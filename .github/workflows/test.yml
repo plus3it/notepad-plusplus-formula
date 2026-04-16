@@ -7,6 +7,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  lint:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path ./ -Recurse -Severity Error -EnableExit
+
   windows:
     uses: plus3it/actions-workflows/.github/workflows/test-salt-windows.yml@00ff10246f901f01818db412fa99124dbed4a00c
     strategy:
