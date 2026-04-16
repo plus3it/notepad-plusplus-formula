@@ -34,13 +34,22 @@ jobs:
       - name: Run PSScriptAnalyzer
         shell: pwsh
         run: |
-          # Debug: Show which files we are actually targeting
           $files = Get-ChildItem -Path ./ -Include *.ps1 -Recurse
-          Write-Host "Found $($files.Count) PowerShell files to scan:"
-          $files.FullName
+          Write-Host "Found $($files.Count) PowerShell files to scan."
 
-          $results = Invoke-ScriptAnalyzer -Path ./ -Recurse -Severity Error
-          if ($results) {
-              $results | Format-Table
-              exit 1
+          $anyErrors = $false
+
+          foreach ($file in $files) {
+              Write-Host "Analyzing: $($file.FullName)..." -NoNewline
+              $results = Invoke-ScriptAnalyzer -Path $file.FullName -Severity Error
+
+              if ($results) {
+                  Write-Host " [FAILED]" -ForegroundColor Red
+                  $results | Format-Table
+                  $anyErrors = $true
+              } else {
+                  Write-Host " [PASSED]" -ForegroundColor Green
+              }
           }
+
+          if ($anyErrors) { exit 1 }
