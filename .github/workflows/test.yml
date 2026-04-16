@@ -41,7 +41,7 @@ jobs:
 
           foreach ($file in $files) {
               $relativePath = $file.FullName.Replace($PWD.ProviderPath, ".")
-              $results = Invoke-ScriptAnalyzer -Path $file.FullName -Severity Error
+              $results = Invoke-ScriptAnalyzer -Path $file.FullName -Severity Warning
 
               if ($results) {
                   Write-Host "FAIL: $relativePath" -ForegroundColor Red
