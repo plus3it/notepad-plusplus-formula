@@ -1,0 +1,92 @@
+{#- -*- coding: utf-8 -*- #}
+{#- vim: ft=jinja #}
+
+{#- Get the `tplroot` from `tpldir` #}
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- from tplroot ~ "/libmapstack.jinja" import mapstack with context %}
+
+{#- Where to lookup parameters source files #}
+{%- set formula_param_dir = tplroot ~ "/parameters" %}
+
+{#- List of sources to lookup for parameters #}
+{#- Fallback to previously used grains plus minion `id` #}
+{%- set map_sources = [
+      "Y:G@osarch",
+      "Y:G@os_family",
+      "Y:G@os",
+      "Y:G@osfinger",
+      "C@" ~ tplroot ~ ":lookup",
+      "C@" ~ tplroot,
+      "Y:G@id",
+    ] %}
+
+{%- set _map_settings = mapstack(
+      matchers=["map_jinja.yaml"],
+      defaults={
+        "values": {"sources": map_sources}
+      },
+      log_prefix="map.jinja configuration: ",
+    )
+    | load_yaml %}
+
+{%- set map_sources = _map_settings | traverse("values:sources") %}
+{%- do salt["log.debug"](
+      "map.jinja: load parameters from sources:\n"
+      ~ map_sources
+      | yaml(False)
+    ) %}
+
+{#- Load formula parameters values #}
+{%- set _formula_matchers = ["defaults.yaml"] + map_sources %}
+
+{%- set _formula_settings = mapstack(
+      matchers=_formula_matchers,
+      dirs=[formula_param_dir],
+      defaults={
+        "values": {},
+        "merge_strategy": salt["config.get"](tplroot ~ ":strategy", None),
+        "merge_lists": salt["config.get"](tplroot ~ ":merge_lists", False),
+      },
+      log_prefix="map.jinja: ",
+    )
+    | load_yaml %}
+
+{#- Make sure to track `map.jinja` configuration with `_mapdata` #}
+{%- do _formula_settings["values"].update(
+      {
+        "map_jinja": _map_settings["values"]
+      }
+    ) %}
+
+{%- do salt["log.debug"]("map.jinja: save parameters in variable 'mapdata'") %}
+{%- set mapdata = _formula_settings["values"] %}
+
+{# Fallback for version if not defined in defaults/pillar #}
+{%- if not mapdata.get('pkg', {}).get('version') %}
+    {%- set github_api = "https://api.github.com/repos/notepad-plus-plus/notepad-plus-plus/releases/latest" %}
+    {%- set metadata = salt['http.query'](github_api, decode=true, decode_type='json').get('dict', {}) %}
+
+    {# Extract version and clean it (v8.6.5 -> 8.6.5) #}
+    {%- set npp_version = metadata.get('tag_name', '0.0.0') | replace('v', '') %}
+
+    {# Also find the download URL while we have the metadata #}
+    {%- set ns = namespace(url='') %}
+    {%- for asset in metadata.get('assets', []) %}
+        {%- if "Installer.x64.exe" in asset.name and asset.name.endswith('.exe') %}
+            {%- set ns.url = asset.browser_download_url %}
+        {%- endif %}
+    {%- endfor %}
+
+    {# Inject both into mapdata #}
+    {%- do mapdata.update({
+        'pkg': {
+            'version': npp_version,
+            'installer_uri': ns.url
+        }
+    }) %}
+
+{%- endif %}
+
+{#- Per formula post-processing of `mapdata` if it exists #}
+{%- do salt["log.debug"]("map.jinja: post-processing of 'mapdata'") %}
+{%- include tplroot ~ "/post-map.jinja" ignore missing %}
